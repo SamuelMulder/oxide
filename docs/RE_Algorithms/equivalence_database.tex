@@ -1,0 +1,30 @@
+\documentclass[]{article}   
+
+\usepackage[margin=2.5cm]{geometry}
+\begin{document}
+
+\begin{center}
+\underline{\LARGE Equivalence Database Formatting Guide}\\
+\end{center}
+\vspace{5 mm}
+The equivalence database is located in \emph{core\/libraries\/equivalence\_database}.  It is used in conjunction with the alg\_ident plugin currently located in \emph{modules\/extractors\_dev\/alg\_ident}.
+Its purpose is to automatically offer alternatives to common assembly instructions written in the templates used by alg\_ident.  For instance, a rotate-right (ror) can be rewritten as a series of shifts
+followed by an or operation.  Rather than enumerating all the possibilities within each template, the equivalence database offers a fast alternative. \\
+
+\noindent When adding new entries into the database, the following formatting standards should be followed:\\ \\
+1) Each new instruction entry should be on its own line.  The line should contain the instruction mnemonic, a colon, and a comma-delimited list of instructions needed to comprise the equivalence\\
+\emph{EX: ror: shr, shl, or}\\
+2) Each line between that instruction entry and the next should be another representation of that instruction\\
+3) Multiple instruction sequences should be separated by semicolons\\
+4) Terminal variables can be used to represent unknown values that need to be the same in certain positions:\\
+\emph{EX: shl C 32-B; shr A B; or C A}\\
+5) Mathematical expressions such as the one in the previous example will be automatically evaluated\\
+6) All terminal variables should be single capital letters (A, B, C, etc.), and everything else should be lowercase\\
+7) Blank lines are ignored\\
+8) White space is ignored as long as it separates variables and instructions\\
+
+
+
+  
+
+\end{document}

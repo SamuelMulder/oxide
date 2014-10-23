@@ -1,0 +1,291 @@
+# See the main shell tutorial (docs/shell_tutorial.txt) for general use of the Oxide shell
+
+# Open the Oxide shell and import/create the sample collection
+$ python shell.py
+
+ --------   Oxide   -------- 
+ oxide > import datasets/sample_dataset/ | collection create mycol
+Processed 24/24 (100.00%)   time: 0.02m   est: 0.00m   20.33 per/s
+  - 24 file(s) imported, 24 are new
+  - Collection mycol created
+
+# Set the context to the sample collection. Collections are referenced by &
+ oxide > context set &mycol
+  - Context cleared and set to 24 items
+
+# Show the context items. Context items are referenced by $
+oxide > show context
+  ---------- Context -------------------
+  0:thunderbird.exe  ( 399512 bytes )
+  1:bundle4.tar.bz2  ( 519459 bytes )
+  2:ipd.pe32.v1  ( 133632 bytes )
+  3:pidgin.upx  ( 38378 bytes )
+  4:bundle3.zip  ( 97268 bytes )
+  5:firefox.exe  ( 924632 bytes )
+  6:netcat  ( 48052 bytes )
+  7:ipd.pe32.g0  ( 483933 bytes )
+  8:ipd.elf32.g0  ( 15010 bytes )
+  9:pidgin.exe  ( 48618 bytes )
+  10:cat  ( 71641 bytes )
+  11:ipd.mac64.g0  ( 21200 bytes )
+  12:bundle2.tar.gz  ( 100387 bytes )
+  13:cp  ( 124863 bytes )
+  14:ipd.elf64.g0  ( 21070 bytes )
+  15:nmap.exe  ( 748032 bytes )
+  16:7z.exe  ( 163840 bytes )
+  17:7z.upx  ( 77824 bytes )
+  18:bundle1.zip  ( 67854 bytes )
+  19:netcat.upx  ( 20432 bytes )
+  20:rm  ( 82264 bytes )
+  21:bash  ( 725136 bytes )
+  22:putty.exe  ( 483328 bytes )
+  23:ipd.mac32.g0  ( 18908 bytes )
+  --------------------------------------
+ 
+# Remove thunderbird and firefox from mycol, we will use them for the sample and the evaluation collection
+ oxide > collection remove mycol $0 $5 
+  - 2 item(s) removed from collection mycol
+
+# Validate that they have been removed
+ oxide > show &sample --verbose
+  ---------- Collection 53ce58a57c782cccaad4d4e0959a26bd49d3af54 
+  - 'name': mycol
+  - 'notes': 
+  - 'num_oids': 22
+  - 'oids': 
+	  -  02ba7205702dbcd5c2dd50de69637b1bd6cdca80 : ipd.pe32.g0
+	  -  20fea1314dbed552d5fedee096e2050369172ee1 : 7z.exe
+	  -  4e3fc623510bf3a81e726c5a4fdb0b0df9bb7c59 : nmap.exe
+	  -  7193164643b1666d0fc315d21bff4a4712d1c59c : ipd.mac32.g0
+	  -  86a956a68e3e0ddcbfaef3c863eaa991c964c3f6 : ipd.elf64.g0
+	  -  8ad5832097faf9f32ec48f8ae6ce799fed668cb5 : bundle1.zip
+	  -  98cb27c309643e983bffc0da86199bc3b7d0fc65 : netcat
+	  -  a9561a12a683ec46dbff10592cc26978e619c825 : bundle3.zip
+	  -  add2b6bb98a432dfdce6af34067938ac40aecb01 : ipd.elf32.g0
+	  -  ae33ee60c7b11a31a0b7070f11fe1649454bf930 : ipd.mac64.g0
+	  -  af68710ffdb5654f1b46c5f2b920de920d4fbf07 : pidgin.exe
+	  -  b11a526d3d37be5c38e31a56ab762b9471957cca : putty.exe
+	  -  b8721a7d7c1e2168614fc6d5fdf09b5f477cef95 : cat
+	  -  be339e5bc98caab0d6bc7d3fd97caceef2eda7d1 : ipd.pe32.v1
+	  -  e3371281eb9017b85fbbca553ba687ff04ed00f2 : bash
+	  -  edec6dff47be52973da2ffe55949b33a656f3595 : bundle4.tar.bz2
+	  -  ef71fa8a646851941714dc5d8993f59bcf5934bf : rm
+	  -  f2a3c58f62423335543fe8ffb0058b1c77d77d12 : pidgin.upx
+	  -  f80d016fad31324b8c31c1985f401cf4e42cedbf : 7z.upx
+	  -  f8ab9279a18886065ce444f869563b4af276116b : cp
+	  -  f8bfcc27b6604afa2fc266c292edd938c9924929 : netcat.upx
+	  -  ff8321e26633f09d8510005f2b3e4b3b755cdb1c : bundle2.tar.gz
+
+  - 'tags': 
+	  - 'creation_time': Fri Jan 20 13:18:53 2012
+  --------------------------------------
+
+
+# Create a collection with only firefox.exe in it
+ oxide > collection create ff $5
+  - Collection ff created
+
+
+# Now we have two collections
+ oxide > show collections
+  ---------- Collections ---------------
+  - 'ff': 1
+  - 'mycol': 22
+  --------------------------------------
+
+
+# Load the similarity plugin, set the thunderbird to be the sample collection to be the training collection
+ oxide > plugin similarity
+  --- Similarity Plugin Init ---
+
+ 'q' to abort loading plugin
+
+   Available features (q to quit):
+	0. byte_ngrams
+	1. opcode_histogram
+	2. opcode_ngrams
+	3. function_hashes
+
+  - Select the number of a feature: 2
+
+  - Set sample to (oid or $<context_item>): $0
+
+  - The following collections already exist: ff, mycol
+    Set training collection to (e.g. &<col_name): &mycol
+
+# Now the plugin has the feature, sample and train_collection set
+ oxide > similarity_print
+ --- Similarity Plugin Variables ---
+ - eval_collection : None 
+ - feature : opcode_ngrams 
+ - results : None 
+ - sample : c4bc4cceda6346956765779316c141003b35d130 (thunderbird.exe)  
+ - signature : None 
+ - train_collection : 53ce58a57c782cccaad4d4e0959a26bd49d3af54 (mycol)  
+
+
+# Compose a signature. The first time items are disassembled it may take some time but subsequent runs will be faster.
+# Composing a signature involves discovering features (in this case opcode n-grams where n = 3) that exist in the target
+# but do not exist in the training collection.  These are unique signatures for that file against the corpus
+# of files in the training collection. 
+ oxide > signature_compose
+Processed 22/22 (100.00%)   time: 3.09m   est: 0.00m   0.12 per/s
+  - Setting the signature to the intersection
+
+  ----- Comparison of sample:thunderbird.exe to collection:mycol ------
+
+  - sample_unique: int3,call,push inc,shr,jmp sbb,neg,sub lea,mul,seto int3,sub,xor pop,mul,seto neg,sub,ret push,movzx,test test,jmp,int3 pop,lea,mul push,pop,mul imul,inc,push and,or,inc inc,shr,and int3,call,jmp push,lea,jbe sar,sub,jmp mov,imul,inc
+
+# The signature is now set
+ oxide > similarity_print --verbose
+ --- Similarity Plugin Variables ---
+ - eval_collection : None 
+ - feature : opcode_ngrams 
+ - results : None 
+ - sample : c4bc4cceda6346956765779316c141003b35d130 (thunderbird.exe)  
+ - signature : {'opcode_ngrams': set(['int3,call,push', 'inc,shr,jmp', 'sbb,neg,sub', 'lea,mul,seto', 'int3,sub,xor', 'pop,mul,seto', 'neg,sub,ret', 'push,movzx,test', 'test,jmp,int3', 'pop,lea,mul', 'push,pop,mul', 'imul,inc,push', 'and,or,inc', 'inc,shr,and', 'int3,call,jmp', 'push,lea,jbe', 'sar,sub,jmp', 'mov,imul,inc'])} 
+ - train_collection : 53ce58a57c782cccaad4d4e0959a26bd49d3af54 (mycol)
+
+# Save out the settings
+ oxide > similarity_save mysettings
+  - Saving similarity plugin settings to file mysettings.similarity
+  - Done.
+
+# If we reload the plugin the settings file will be detected and we can choose to load it
+ oxide > plugin similarity
+  - Similarity plugin file(s) found:
+    0. mysettings.similarity
+
+  - Select the number of the file to use (q to quit): 0
+  - Loading similarity plugin settings from file mysettings.similarity
+  - Done.
+
+# Change the feature to function hashes
+ oxide > set_feature
+   Available features (q to quit):
+	0. byte_ngrams
+	1. opcode_histogram
+	2. opcode_ngrams
+	3. function_hashes
+
+  - Select the number of a feature: 3
+
+# By running signature_compose again we add function hashes to our current signature
+ oxide > signature_compose
+
+  ----- Comparison of sample:thunderbird.exe to collection:mycol ------
+
+  - sample_hashes: 65
+
+# Now there are two features in our signature
+ oxide > similarity_print
+ --- Similarity Plugin Variables ---
+ - eval_collection : None 
+ - feature : function_hashes 
+ - results : None 
+ - sample : c4bc4cceda6346956765779316c141003b35d130 (thunderbird.exe)  
+ - signature : function_hashes, opcode_ngrams 
+ - train_collection : 53ce58a57c782cccaad4d4e0959a26bd49d3af54 (mycol)  
+
+# Set our evaluation collection to the collection with only firefox.exe
+ oxide > set_eval_collection &ff
+
+# signature_apply will find our signature in the evaluation collection
+# In this case thunderbird and firefox have 40 functions in common and 6 opcode 3 grams in common.
+# They may actually share more in common, but these features are the ones that they have in common
+# that do not appear in the training collection.  This allows Oxide to focus in on elements that
+# are characteristic of the software and not just boiler plate stuff that appears in almost all programs.
+ oxide > signature_apply
+  - Applying signature
+  - Processing feature function_hashes
+  - Processing feature opcode_ngrams
+  - Done
+
+  ---- Results of applying signature to collection: ff
+
+  - File: firefox.exe   Feature: function_hashes   Items: 40
+  ------------------------------------------------------------
+  - File: firefox.exe   Feature: opcode_ngrams   Items: int3,call,push, int3,sub,xor, neg,sub,ret, sbb,neg,sub, int3,call,jmp, push,lea,jbe
+  ------------------------------------------------------------
+
+
+# Now we have results that have been set for function_hashes and opcode_ngrams
+ oxide > similarity_print
+ --- Similarity Plugin Variables ---
+ - eval_collection : 67c4fd2660aeca9de9ab547c3f5402689423f601 (ff)  
+ - feature : function_hashes 
+ - results : function_hashes, opcode_ngrams 
+ - sample : c4bc4cceda6346956765779316c141003b35d130 (thunderbird.exe)  
+ - signature : function_hashes, opcode_ngrams 
+ - train_collection : 53ce58a57c782cccaad4d4e0959a26bd49d3af54 (mycol) 
+
+# Save the results
+ oxide > similarity_save mysettings
+  - File mysettings.similarity already exists, overwrite (y/N)? y
+  - Saving similarity plugin settings to file mysettings.similarity
+  - Done.
+
+# Signatures can be deleted 
+ oxide > signature_adjust
+  --- Adjust Signature ---
+
+  - Available Features:
+	0. byte_ngrams  (not set)
+	1. function_hashes  (set)
+	2. opcode_histogram  (not set)
+	3. opcode_ngrams  (set)
+
+  - What is the number of the feature to change (q to quit)? 1
+  - Example signature input for opcode_ngrams, byte_ngrams and function hashes:
+      'mov,pop,pop' 'mov,xor,xor' 'add,test,jz'
+      '2c 34 f2' 'a6 ff ff' 
+      'dcbe856a9f61abdc5efbd3a9a4ed050de3097855' '5e15d142b804696bfcab033b1bae207955912a8a'
+
+  - Set function_hashes to (leave blank to delete or q to quit): 
+  - Removing signature for function_hashes
+
+# Signatures can be set manually
+# This may be useful when after some manual reverse engineering you have determined a signature that you'd 
+# like to test out. 
+ oxide > signature_adjust
+  --- Adjust Signature ---
+
+  - Available Features:
+	0. byte_ngrams  (not set)
+	1. function_hashes  (not set)
+	2. opcode_histogram  (not set)
+	3. opcode_ngrams  (set)
+
+  - What is the number of the feature to change (q to quit)? 0
+  - Example signature input for opcode_ngrams, byte_ngrams and function hashes:
+      'mov,pop,pop' 'mov,xor,xor' 'add,test,jz'
+      '2c 34 f2' 'a6 ff ff' 
+      'dcbe856a9f61abdc5efbd3a9a4ed050de3097855' '5e15d142b804696bfcab033b1bae207955912a8a'
+
+  - Set byte_ngrams to (leave blank to delete or q to quit): '2c 34 f2' 'a6 ff ff'
+
+  - Changing signature for byte_ngrams
+
+# The uniqueness function displays the unique feature elements of each item in the training collection as compared to the other members of the training collection
+
+ oxide > help uniqueness
+  Plugin: Using train_collection display the unique elements for each item
+  Syntax: individual_signatures
+
+ oxide > uniqueness
+ - Data for feature opcode_ngrams is not available for sample bundle4.tar.bz2
+ - Data for feature opcode_ngrams is not available for sample pidgin.upx
+ - Data for feature opcode_ngrams is not available for sample bundle3.zip
+ - Data for feature opcode_ngrams is not available for sample ipd.mac64.g0
+ - Data for feature opcode_ngrams is not available for sample bundle2.tar.gz
+ - Data for feature opcode_ngrams is not available for sample 7z.upx
+ - Data for feature opcode_ngrams is not available for sample bundle1.zip
+ - Data for feature opcode_ngrams is not available for sample netcat.upx
+ - Data for feature opcode_ngrams is not available for sample ipd.mac32.g0
+  -----  Uniqueness for feature opcode_ngrams for collection: mycol -----
+
+É
+
+
+
+

@@ -1,0 +1,522 @@
+################################################
+# Feature Extraction & Classification Tutorial #
+################################################
+
+
+----------
+- Part 1 -
+----------
+
+# start oxide shell
+bash > python shell.py
+  
+  
+# create collections
+oxide > import datasets/compilers/pe32/g0/Test* | collection create pe32_g0_Test
+  - 17 file(s) imported, 0 are new
+  - Collection pe32_g0_Test created
+
+oxide > import datasets/compilers/elf64/g3/Test* | collection create elf64_g3_Test
+  - 17 file(s) imported, 0 are new
+  - Collection elf64_g3_Test created
+
+
+# import feature extraction and classification plugins
+oxide > plugin featureExtraction classification
+
+
+# build feature extraction model (no options given, using default configuration)
+oxide > &pe32_g0_Test &elf64_g3_Test | buildFeatureExtractionModel
+*************************************
+* Building Feature Extraction Model *
+*************************************
+Checking necessary parameters...
+Generating label from config...
+Label: 597857798c9216871c54ab8a9fbca95a
+Getting OID data features...
+Normalizing data...
+Storing results in local datastore...
+
+
+# use feature extraction model on input files from OIDs
+oxide > &pe32_g0_Test &elf64_g3_Test | extractFeatures
+*************************************
+* Building Feature Extraction Model *
+*************************************
+Checking necessary parameters...
+Generating label from config...
+Label: 597857798c9216871c54ab8a9fbca95a
+Does not need to execute - stored results exist...
+Retrieving stored results from local datastore...
+***********************
+* Extracting Features *
+***********************
+Checking necessary parameters...
+Generating label from config...
+Label: 449f17fbd5fda8bfbafe17979ca1639f
+Getting OID data features...
+Normalizing data...
+Storing results in local datastore...
+
+
+# build classification model (no options given, using default configuration)
+oxide > &pe32_g0_Test &elf64_g3_Test | buildClassificationModel
+*************************************
+* Building Feature Extraction Model *
+*************************************
+Checking necessary parameters...
+Generating label from config...
+Label: 597857798c9216871c54ab8a9fbca95a
+Does not need to execute - stored results exist...
+Retrieving stored results from local datastore...
+***********************
+* Extracting Features *
+***********************
+Checking necessary parameters...
+Generating label from config...
+Label: 449f17fbd5fda8bfbafe17979ca1639f
+Does not need to execute - stored results exist...
+Retrieving stored results from local datastore...
+******************************
+* Build Classification Model *
+******************************
+Checking necessary parameters...
+Generating label from config...
+Label: e392639e42391afbcfca8914bf0e98f6
+Normalizing data...
+Storing results in local datastore...
+
+
+# classify files
+oxide > &pe32_g0_Test &elf64_g3_Test | classify
+*************************************
+* Building Feature Extraction Model *
+*************************************
+Checking necessary parameters...
+Generating label from config...
+Label: 597857798c9216871c54ab8a9fbca95a
+Does not need to execute - stored results exist...
+Retrieving stored results from local datastore...
+***********************
+* Extracting Features *
+***********************
+Checking necessary parameters...
+Generating label from config...
+Label: 449f17fbd5fda8bfbafe17979ca1639f
+Does not need to execute - stored results exist...
+Retrieving stored results from local datastore...
+******************************
+* Build Classification Model *
+******************************
+Checking necessary parameters...
+Generating label from config...
+Label: e392639e42391afbcfca8914bf0e98f6
+Does not need to execute - stored results exist...
+Retrieving stored results from local datastore...
+***************
+* Classifying *
+***************
+Checking necessary parameters...
+Generating label from config...
+Label: 1125bf5200331777e667f51e14a53261
+Getting OID data features...
+Normalizing data...
+Classifying original OIDs used to build classification model...
+Storing results in local datastore...
+
+Group 1:
+    TestBinaryHeap.g.O3
+    TestQuadraticProbing.g.O3
+    TestStackLi.g.O3
+    TestBinomialQueue.g.O3
+    TestQueueAr.g.O3
+    TestSplayTree.g.O3
+    TestAATree.g.O3
+    TestTreap.g.O3
+    TestAvlTree.g.O3
+    TestBinarySearchTree.g.O3
+    TestSeparateChaining.g.O3
+    TestLeftistHeap.g.O3
+    TestPairingHeap.g.O3
+    TestStackAr.g.O3
+    TestLinkedList.g.O3
+    TestDSL.g.O3
+    TestRedBlackTree.g.O3
+
+Group 0:
+    TestLinkedList.g.O0
+    TestSplayTree.g.O0
+    TestQueueAr.g.O0
+    TestQuadraticProbing.g.O0
+    TestStackLi.g.O0
+    TestRedBlackTree.g.O0
+    TestBinomialQueue.g.O0
+    TestBinaryHeap.g.O0
+    TestTreap.g.O0
+    TestBinarySearchTree.g.O0
+    TestSeparateChaining.g.O0
+    TestAvlTree.g.O0
+    TestStackAr.g.O0
+    TestDSL.g.O0
+    TestPairingHeap.g.O0
+    TestAATree.g.O0
+    TestLeftistHeap.g.O0
+
+
+# cool thing about oxide is that you don't have to tediously do all of these
+# commands in order to get to the juicy classification results.  you can simply
+# issue the classify command shown above with a completely empty local datastore
+# and all the other commands (build/use feature extraction model, build
+# classification model) will be called automatically for you.  let's 
+# demonstrate this by first clearing our local datastore and then classifying
+# the same files as before.  instead of retrieving previous results from the 
+# local datastore and using them, it will execute all necessary functions
+# to make classification possible.
+
+oxide > exit()
+bash > rm -r localstore
+bash > python shell.py
+ --------   Oxide   -------- 
+oxide > plugin featureExtraction classification
+oxide > &pe32_g0_Test &elf64_g3_Test | classify
+*************************************
+* Building Feature Extraction Model *
+*************************************
+Checking necessary parameters...
+Generating label from config...
+Label: 597857798c9216871c54ab8a9fbca95a
+Getting OID data features...
+Normalizing data...
+Storing results in local datastore...
+***********************
+* Extracting Features *
+***********************
+Checking necessary parameters...
+Generating label from config...
+Label: 449f17fbd5fda8bfbafe17979ca1639f
+Getting OID data features...
+Normalizing data...
+Storing results in local datastore...
+******************************
+* Build Classification Model *
+******************************
+Checking necessary parameters...
+Generating label from config...
+Label: e392639e42391afbcfca8914bf0e98f6
+Normalizing data...
+Storing results in local datastore...
+***************
+* Classifying *
+***************
+Checking necessary parameters...
+Generating label from config...
+Label: 1125bf5200331777e667f51e14a53261
+Getting OID data features...
+Normalizing data...
+Classifying original OIDs used to build classification model...
+Storing results in local datastore...
+
+Group 1:
+    TestBinaryHeap.g.O3
+    TestQuadraticProbing.g.O3
+    TestStackLi.g.O3
+    TestBinomialQueue.g.O3
+    TestQueueAr.g.O3
+    TestSplayTree.g.O3
+    TestAATree.g.O3
+    TestTreap.g.O3
+    TestAvlTree.g.O3
+    TestBinarySearchTree.g.O3
+    TestSeparateChaining.g.O3
+    TestLeftistHeap.g.O3
+    TestPairingHeap.g.O3
+    TestStackAr.g.O3
+    TestLinkedList.g.O3
+    TestRedBlackTree.g.O3
+    TestDSL.g.O3
+
+Group 0:
+    TestLinkedList.g.O0
+    TestSplayTree.g.O0
+    TestQueueAr.g.O0
+    TestQuadraticProbing.g.O0
+    TestStackLi.g.O0
+    TestSeparateChaining.g.O0
+    TestBinomialQueue.g.O0
+    TestBinaryHeap.g.O0
+    TestTreap.g.O0
+    TestBinarySearchTree.g.O0
+    TestRedBlackTree.g.O0
+    TestAvlTree.g.O0
+    TestStackAr.g.O0
+    TestDSL.g.O0
+    TestPairingHeap.g.O0
+    TestLeftistHeap.g.O0
+    TestAATree.g.O0
+
+
+# if you would like to save your results as a with a particular label,
+# you can do so for whatever combination of the four stages you please.
+# for example, let's perform the same classification as before, but let's
+# give our own labels for the feature extraction model results and classification
+# model results instead of the automatically generated ones.
+oxide > &pe32_g0_Test &elf64_g3_Test | classify --feModelLabel=thisIsMyFeatureExtractionModelLabel --clModelLabel=thisIsMyClassificationModelLabel
+*************************************
+* Building Feature Extraction Model *
+*************************************
+Checking necessary parameters...
+Using --feModelLabel flag...
+Getting OID data features...
+Normalizing data...
+Storing results in local datastore...
+***********************
+* Extracting Features *
+***********************
+Checking necessary parameters...
+Generating label from config...
+Label: c9d65076461e23f79f2a99f1b3bdde07
+Getting OID data features...
+Normalizing data...
+Storing results in local datastore...
+******************************
+* Build Classification Model *
+******************************
+Checking necessary parameters...
+Using --clModelLabel flag...
+Normalizing data...
+Storing results in local datastore...
+***************
+* Classifying *
+***************
+Checking necessary parameters...
+Generating label from config...
+Label: c8da6ff6fa140f80cadd6e33f1507274
+Getting OID data features...
+Normalizing data...
+Classifying original OIDs used to build classification model...
+Storing results in local datastore...
+
+Group 1:
+    TestBinaryHeap.g.O3
+    TestQuadraticProbing.g.O3
+    TestStackLi.g.O3
+    TestBinomialQueue.g.O3
+    TestQueueAr.g.O3
+    TestSplayTree.g.O3
+    TestAATree.g.O3
+    TestTreap.g.O3
+    TestAvlTree.g.O3
+    TestBinarySearchTree.g.O3
+    TestSeparateChaining.g.O3
+    TestLeftistHeap.g.O3
+    TestPairingHeap.g.O3
+    TestStackAr.g.O3
+    TestLinkedList.g.O3
+    TestRedBlackTree.g.O3
+    TestDSL.g.O3
+
+Group 0:
+    TestLinkedList.g.O0
+    TestSplayTree.g.O0
+    TestQueueAr.g.O0
+    TestQuadraticProbing.g.O0
+    TestStackLi.g.O0
+    TestSeparateChaining.g.O0
+    TestBinomialQueue.g.O0
+    TestBinaryHeap.g.O0
+    TestTreap.g.O0
+    TestBinarySearchTree.g.O0
+    TestRedBlackTree.g.O0
+    TestAvlTree.g.O0
+    TestStackAr.g.O0
+    TestDSL.g.O0
+    TestPairingHeap.g.O0
+    TestLeftistHeap.g.O0
+    TestAATree.g.O0
+
+
+# now, for example, if we wanted to reuse the feature extraction model
+# or classification model in the future, we can just use the
+# --loadFeModelLabel=thisIsMyFeatureExtractionModelLabel  or
+# --loadClModelLabel=thisIsMyClassificationModelLabel flags respectively.
+
+
+
+----------
+- Part 2 -
+----------
+
+# create a collection for the FindMax pe32 file compiled with gcc
+oxide > import datasets/compilers/pe32/g0/FindMax.g.O0 | collection create pe32_g0_FindMax
+  - 1 file(s) imported, 0 are new
+  - Collection pe32_g0_FindMax created
+  
+  
+# create a collection for the Test pe32 files compiled with visual studio
+oxide > import datasets/compilers/pe32/v1/Test* | collection create pe32_v1_Test
+  - 17 file(s) imported, 0 are new
+  - Collection pe32_v1_Test created
+
+
+# let's create a classification model using  the Test pe32 files compiled with gcc and visual studios
+oxide > &pe32_v1_Test &pe32_g0_Test | buildClassificationModel --clModelLabel=MyAwesomeModel
+*************************************
+* Building Feature Extraction Model *
+*************************************
+Checking necessary parameters...
+Generating label from config...
+Label: d117efe07869a4c98eb9ba43dc26cf1f
+Getting OID data features...
+Normalizing data...
+Storing results in local datastore...
+***********************
+* Extracting Features *
+***********************
+Checking necessary parameters...
+Generating label from config...
+Label: d8169a4594de09e15532f8ba0bfb5974
+Getting OID data features...
+Normalizing data...
+Storing results in local datastore...
+******************************
+* Build Classification Model *
+******************************
+Checking necessary parameters...
+Using --clModelLabel flag...
+Normalizing data...
+Storing results in local datastore...
+
+
+# now using our new classification model, let's see if oxide can figure out the group to which
+# the FindMax pe32 file compiled with gcc belongs
+oxide > oxide > classify --loadClModelLabel=MyAwesomeModel --clOIDs=pe32_g0_FindMax
+******************************
+* Build Classification Model *
+******************************
+Retrieving "MyAwesomeModel" results...
+Retrieving stored results from local datastore...
+***************
+* Classifying *
+***************
+Checking necessary parameters...
+*************************************
+* Building Feature Extraction Model *
+*************************************
+Retrieving "d117efe07869a4c98eb9ba43dc26cf1f" results...
+Retrieving stored results from local datastore...
+***********************
+* Extracting Features *
+***********************
+Checking necessary parameters...
+Generating label from config...
+Label: be0d912986467c33e7a303911a65409b
+Getting OID data features...
+Normalizing data...
+Storing results in local datastore...Generating label from config...
+Label: d1c2e9b8a0a358cf0920412cc74dc6c4
+Normalizing data...
+Classifying OIDs given with flag --clOIDs...
+Storing results in local datastore...
+
+Group 1:
+    TestLinkedList.g.O0
+    TestSplayTree.g.O0
+    TestQueueAr.g.O0
+    FindMax.g.O0
+    TestQuadraticProbing.g.O0
+    TestStackLi.g.O0
+    TestSeparateChaining.g.O0
+    TestBinomialQueue.g.O0
+    TestBinaryHeap.g.O0
+    TestTreap.g.O0
+    TestBinarySearchTree.g.O0
+    TestRedBlackTree.g.O0
+    TestAvlTree.g.O0
+    TestStackAr.g.O0
+    TestDSL.g.O0
+    TestPairingHeap.g.O0
+    TestLeftistHeap.g.O0
+    TestAATree.g.O0
+
+Group 0:
+    TestLeftistHeap.v.O1
+    TestSeparateChaining.v.O1
+    TestDSL.v.O1
+    TestAvlTree.v.O1
+    TestPairingHeap.v.O1
+    TestSplayTree.v.O1
+    TestBinarySearchTree.v.O1
+    TestLinkedList.v.O1
+    TestTreap.v.O1
+    TestQueueAr.v.O1
+    TestRedBlackTree.v.O1
+    TestStackLi.v.O1
+    TestAATree.v.O1
+    TestStackAr.v.O1
+    TestBinaryHeap.v.O1
+    TestBinomialQueue.v.O1
+    TestQuadraticProbing.v.O1
+
+
+# looks like the FindMax file was properly attributed to the gcc compiled group.
+# the guide below shows useful options and flags you can use to aide in
+# feature extraction and classification.
+
+
+###########
+# Plugins #
+###########
+ - featureExtraction
+ - classification
+
+###################
+# Plugin Commands #
+###################
+ - buildFeatureExtractionModel
+ - extractFeatures
+ - buildClassificationModel
+ - classify
+
+###################
+# Options & Flags #
+###################
+-------------
+Assign Labels
+-------------
+  --feModelLabel=sample_label     # assign label "sample_label" to feature extraction model
+  --feLabel=sample_label          # assign label "sample_label" to feature extraction results
+  --clModelLabel=sample_label     # assign label "sample_label" to classification model
+  --clLabel=sample_label          # assign label "sample_label" to classification results
+
+------------------------
+Load Results Using Label
+------------------------
+  --loadFeModelLabel=sample_label     # load feature extraction model labeled "sample_label"
+  --loadFeLabel=sample_label          # load feature extraction results labeled "sample_label"
+  --loadClModelLabel=sample_label     # load classification model labeled "sample_label"
+  --loadClLabel=sample_label          # load classification results labeled "sample_label"
+
+-------------------------------------------------
+Use Different OIDs Than Ones Used To Create Model
+-------------------------------------------------
+  --feOIDs=exe      # use &exe collection for feature extraction
+  --clOIDs=exe      # use &exe collection for classification
+
+----
+Misc
+----
+  --rerun                    # rerun process even if there are already stored results
+  --noFeatureExtraction      # do not perform feature extraction (raw OID feature data will be used for building classification model and/or classification)
+  --feAlgorithm=pca          # use PCA feature extraction algorithm (other algorithms can be used once created, pca is default)
+  --clAlgorithm=kmeans       # use k-means classification algorithm (other algorithms can be used once created, k-means is default)
+  --dontSave                 # don't save any results to local datastore
+ --feature=opcode_histogram  # change what type of features are used (changed to opcode histogram in this example)
+
+-----------------------
+Example Parameter Flags
+-----------------------
+ --k=3                # set k-value for k-means classification to 3
+ --normalize=False    # do not normalize values in PCA feature extraction
+
+
+
